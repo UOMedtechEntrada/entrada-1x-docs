@@ -73,6 +73,11 @@ RUN sed -i 's@upload_max_filesize = 2M@upload_max_filesize = 512M@g' /etc/php.in
 RUN sed -i 's@post_max_size = 8M@post_max_size = 512M@g' /etc/php.ini
 RUN sed -i 's@memory_limit = 128M@memory_limit = 512M@g' /etc/php.ini
 
+# Enable Xdebug's remote_debugging.
+# Important Note: Windows users must change docker.for.mac.host.internal to docker.for.win.host.internal
+RUN sed -i 's@;xdebug.remote_enable = 0@xdebug.remote_enable = 1@g' /etc/php.d/15-xdebug.ini
+RUN sed -i 's@;xdebug.remote_host = localhost@xdebug.remote_host = docker.for.mac.host.internal@g' /etc/php.d/15-xdebug.ini
+
 # Set the container volumes.
 VOLUME /var/lib/mysql
 VOLUME /var/www/vhosts
@@ -106,5 +111,30 @@ COPY mariadb/entrada.cnf /etc/my.cnf.d
 COPY mariadb/entrada.sql /tmp
 COPY mariadb/mariadb-start.sh /usr/bin
 RUN chmod +x /usr/bin/mariadb-start.sh
+
+# Add github.com to your known_hosts file.
+RUN mkdir -p /root/.ssh && chmod 0700 /root/.ssh && ssh-keyscan github.com > /root/.ssh/known_hosts
+
+# In order to load your SSH private key into the Docker container for
+# use with deployments and cloning private repositories we use Docker's
+# "Secrets" feature. The secrets defined in the docker-compose.yml file
+# mount the hosts ~/.ssh/id_rsa file in read-only mode to
+# /run/secrets/ssh_private_key, which is then symlinked to /root/.ssh/id_rsa.
+#
+# Sadly this will not work for Windows users and you will need to remove
+# the automatically created symlink and copy the mounted file manually so
+# that you can set the appropriate permissions. See instructions below.
+
+RUN ln -s /run/secrets/ssh_private_key /root/.ssh/id_rsa
+
+# Instructions for Windows users to load your SSH private key:
+#
+# 1. Launch Windows PowerShell and type:
+#    docker exec -it entrada-developer bash
+#
+# 2. Replace the automatically created symlink with a copied file.
+#    rm /root/.ssh/id_rsa
+#    cp /run/secrets/ssh_private_key /root/.ssh/id_rsa
+#    chmod 0400 /root/.ssh/id_rsa
 
 CMD ["/usr/bin/supervisord"]
