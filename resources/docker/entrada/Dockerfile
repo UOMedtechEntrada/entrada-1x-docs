@@ -98,15 +98,14 @@ RUN echo "IncludeOptional vhosts.d/*.conf" >> /etc/httpd/conf/httpd.conf
 #COPY apache/phpmyadmin.conf /etc/httpd/conf.d/phpmyadmin.conf
 
 # Install Capistrano for deployment recipes.
-RUN gem install capistrano -v 2.15.9
-RUN gem install colorize
-RUN gem install sshkit
-RUN gem install gnm-caplock
+#RUN gem install capistrano -v 2.15.9
+#RUN gem install colorize
+#RUN gem install sshkit
+#RUN gem install gnm-caplock
 
 EXPOSE 80
 EXPOSE 443
 EXPOSE 3306
-EXPOSE 4444
 
 # Copy Supervisor configuration.
 COPY supervisor/supervisord.conf /etc/supervisord.conf
