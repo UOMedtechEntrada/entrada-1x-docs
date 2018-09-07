@@ -93,6 +93,8 @@ RUN echo "IncludeOptional vhosts.d/*.conf" >> /etc/httpd/conf/httpd.conf
 RUN yum -y install phpmyadmin
 COPY apache/phpmyadmin.conf /etc/httpd/conf.d/phpmyadmin.conf
 
+RUN gem install net-ssh -v 4.2.0
+
 # Install Capistrano for deployment recipes.
 RUN gem install capistrano -v 2.15.9
 RUN gem install colorize
