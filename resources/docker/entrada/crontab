@@ -1,0 +1,2 @@
+* 9 * * * root cd /var/www/vhosts/elentra-1x-admissions/www-root/core/library/vendor/entradapackages/entrada-1x-api && /usr/bin/php artisan admissions:omsas
+

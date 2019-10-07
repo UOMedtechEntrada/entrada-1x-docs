@@ -1,15 +1,18 @@
+
 version: '3.4'
 services:
     entrada:
-        build: entrada
+        build: entrada 
+          #context: ./entrada
+          #dockerfile: Dockerfile
         container_name: entrada-developer
         ports:
-            - 80:80
-            - 443:443
-            - 3306:3306
+            - 82:80
+            - 444:443
+            - 3307:3306
         volumes:
-            - mariadb_data:/var/lib/mysql
-            - ~/Sites:/var/www/vhosts:cached
+      #      - mariadb_data:/var/lib/mysql
+            - /home/devteam/Sites:/var/www/vhosts:cached
             - ./entrada/apache/vhosts.d:/etc/httpd/vhosts.d:cached
         secrets:
             - source: ssh_private_key
@@ -17,8 +20,8 @@ services:
               gid: '0'
               mode: 0400
         restart: always
-volumes:
-    mariadb_data:
+#volumes:
+   # mariadb_data:
 secrets:
     ssh_private_key:
         file: ~/.ssh/id_rsa

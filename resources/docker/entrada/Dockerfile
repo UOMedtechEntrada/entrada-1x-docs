@@ -64,7 +64,10 @@ RUN yum -y install git \
                 php71u-opcache \
                 php71u-json \
                 mariadb101u \
-                mariadb101u-server
+                mariadb101u-server \
+		php71u-mysqli \
+		php71u-pecl-ssh2
+		
 
 # Install wkhtmltopdf from the binary package because the yum package provided by EPEL is broken.
 RUN curl -SL https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz | tar -xJC /root && cp /root/wkhtmltox/bin/* /usr/bin
@@ -140,5 +143,12 @@ RUN ln -s /run/secrets/ssh_private_key /root/.ssh/id_rsa
 #    rm /root/.ssh/id_rsa
 #    cp /run/secrets/ssh_private_key /root/.ssh/id_rsa
 #    chmod 0400 /root/.ssh/id_rsa
+
+ADD crontab /etc/cron.d/omsas-cron
+
+RUN chmod 0644 /etc/cron.d/omsas-cron
+
+RUN touch /var/log/cron.log
+
 
 CMD ["/usr/bin/supervisord"]
